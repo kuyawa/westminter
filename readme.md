@@ -1,4 +1,4 @@
-![Logo](media/icon.jpg)
+![Logo](media/icon.png)
 
 # WestMinter
 
