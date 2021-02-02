@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WestMinter</title>
+	<meta charset="utf-8">
+    <meta name="application-name" content="WestMinter">
+    <meta name="viewport" content="initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#111111">
+    <link rel="stylesheet" type="text/css" href="/hedera/style.css">
+    <link rel="icon" href="/media/mobile-icon.png">
+    <link rel="icon" sizes="192x192" href="/media/mobile-icon-192.png">
+    <link rel="apple-touch-icon" href="/media/mobile-icon-apple.png"/>
+</head>
+<body class="dark-mode">
+<div id="hbar-price">HBAR 0.00000000</div>
+<header>
+	<wrap>
+		<panel id="brand">
+			<a href="/"><img class="logo" src="/media/westminter.png" width="64px"></a> <h1 class="title">WestMinter<small>.com</small></h1> 
+		</panel>
+		<panel id="tools">
+			<div class="themer">
+				<img id="theme" class="darker" src="/media/theme.png" onclick="swapColorTheme()">
+			</div>
+			<div class="env">
+				<div class="flipswitch">
+				    <input type="checkbox" name="flipswitch" class="flipswitch-cb" id="fs" disabled>
+				    <label class="flipswitch-label" for="fs">
+				        <div class="flipswitch-inner"></div>
+				        <div class="flipswitch-switch"></div>
+				    </label>
+				</div>
+			</div>
+		</panel>
+	</wrap>
+</header>
+<section class="market">
+	<wrap>
+		<panel>
+			<box>
+				<table class="tokens" id="list-forex">
+					<caption>Forex</caption>
+					<thead>
+						<tr><th>Token</th><th>Name</th><th>Price</th><th>Supply</th><th>Token Id</th><th>&nbsp;</th></tr>
+					</thead>
+					<tbody>
+						<tr id="0.0.271860" data-price="  1.0000"><td>USD</td><td>Dollar</td><td>  1<i class="dec">.0000</td><td>  1,000,000</td><td>0.0.271860</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271861" data-price="  0.8261"><td>EUR</td><td>Euro  </td><td>  0<i class="dec">.8261</td><td>  1,000,000</td><td>0.0.271861</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271862" data-price="  6.4892"><td>CNY</td><td>Yuan  </td><td>  6<i class="dec">.4892</td><td> 10,000,000</td><td>0.0.271862</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271863" data-price="104.0582"><td>JPY</td><td>Yen   </td><td>104<i class="dec">.0582</td><td>100,000,000</td><td>0.0.271863</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271864" data-price=" 73.2815"><td>INR</td><td>Rupee </td><td> 73<i class="dec">.2815</td><td>100,000,000</td><td>0.0.271864</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+					</tbody>
+				</table>
+			</box>
+			<box>
+				<table class="tokens" id="list-crypto">
+					<caption>Crypto</caption>
+					<thead>
+						<tr><th>Token</th><th>Name</th><th>Price</th><th>Supply</th><th>Token Id</th><th>&nbsp;</th></tr>
+					</thead>
+					<tbody>
+						<tr id="0.0.271865" data-price="36559.1193"><td>BTC</td><td>Bitcoin </td><td>36,559<i class="dec">.1193</i></td><td>     1,000</td><td>0.0.271865</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271866" data-price=" 1416.5422"><td>ETH</td><td>Ethereum</td><td> 1,416<i class="dec">.5422</i></td><td>    10,000</td><td>0.0.271866</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271867" data-price="   16.5603"><td>DOT</td><td>Polkadot</td><td>    16<i class="dec">.5603</i></td><td> 1,000,000</td><td>0.0.271867</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271868" data-price="    0.3742"><td>ADA</td><td>Cardano </td><td>     0<i class="dec">.3742</i></td><td>10,000,000</td><td>0.0.271868</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271869" data-price="  159.2682"><td>LTC</td><td>Litecoin</td><td>   159<i class="dec">.2682</i></td><td>   100,000</td><td>0.0.271869</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+					</tbody>
+				</table>
+			</box>
+			<box>
+				<table class="tokens" id="list-stocks">
+					<caption>Stocks</caption>
+					<thead>
+						<tr><th>Token</th><th>Name</th><th>Price</th><th>Supply</th><th>Token Id</th><th>&nbsp;</th></tr>
+					</thead>
+					<tbody>
+						<tr id="0.0.271870" data-price=" 127.1193"><td>AAPL</td><td>Apple  </td><td>  127<i class="dec">.1193</i></td><td>10,000</td><td>0.0.271870</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271871" data-price="3120.5422"><td>AMZN</td><td>Amazon </td><td>3,120<i class="dec">.5422</i></td><td> 1,000</td><td>0.0.271871</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271872" data-price="1790.3742"><td>GOOG</td><td>Google </td><td>1,790<i class="dec">.3742</i></td><td> 1,000</td><td>0.0.271872</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.293668" data-price=" 532.3900"><td>NFLX</td><td>Netflix</td><td>  532<i class="dec">.3900</i></td><td>10,000</td><td>0.0.293668</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.293669" data-price=" 793.5300"><td>TSLA</td><td>Tesla  </td><td>  793<i class="dec">.5300</i></td><td>10,000</td><td>0.0.293669</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+					</tbody>
+				</table>
+			</box>
+			<box>
+				<table class="tokens" id="list-comms">
+					<caption>Commodities</caption>
+					<thead>
+						<tr><th>Token</th><th>Name</th><th>Price</th><th>Supply</th><th>Token Id</th><th>&nbsp;</th></tr>
+					</thead>
+					<tbody>
+						<tr id="0.0.271877" data-price="1980.1193"><td>GLD</td><td>Gold  </td><td>1,980<i class="dec">.1193</i></td><td>10,000</td><td>0.0.271877</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271878" data-price="  19.5422"><td>SLV</td><td>Silver</td><td>   19<i class="dec">.5422</i></td><td> 1,000</td><td>0.0.271878</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271879" data-price="   3.2682"><td>WHT</td><td>Wheat </td><td>    3<i class="dec">.2682</i></td><td> 1,000</td><td>0.0.271879</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271880" data-price="   2.5603"><td>CRN</td><td>Corn  </td><td>    2<i class="dec">.5603</i></td><td>10,000</td><td>0.0.271880</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271881" data-price="   2.3742"><td>SGR</td><td>Sugar </td><td>    2<i class="dec">.3742</i></td><td>10,000</td><td>0.0.271881</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+					</tbody>
+				</table>
+			</box>
+			<box>
+				<table class="tokens" id="list-users">
+					<caption>User Generated <a id="mytoken" href="#form">Add your token</a></caption>
+					<thead>
+						<tr><th>Token</th><th>Name</th><th>Price</th><th>Supply</th><th>Token Id</th><th>&nbsp;</th></tr>
+					</thead>
+					<tbody>
+						<tr id="0.0.271882" data-price=" 1.0000"><td>TST</td><td>Test Token</td><td> 1<i class="dec">.0000</i></td><td>1,000,000</td><td>0.0.271882</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271883" data-price="10.0000"><td>LUV</td><td>Love all  </td><td>10<i class="dec">.0000</i></td><td>1,000,000</td><td>0.0.271883</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271884" data-price="30.0000"><td>SUN</td><td>Sunshine  </td><td>30<i class="dec">.0000</i></td><td>1,000,000</td><td>0.0.271884</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271885" data-price=" 5.0000"><td>BAR</td><td>Open Bar  </td><td> 5<i class="dec">.0000</i></td><td>1,000,000</td><td>0.0.271885</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+						<tr id="0.0.271886" data-price="15.0000"><td>RUM</td><td>Rum Bottle</td><td>15<i class="dec">.0000</i></td><td>1,000,000</td><td>0.0.271886</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>
+					</tbody>
+					<tbody></tbody>
+				</table>
+				<div class="nosell warn">User generated tokens can not be sold on the DEX only transferred</div>
+			</box>
+			<box id="form" class="pad">
+				<h1 class="title">Hedera Token Service</h1>
+				<div>
+					<div class="field">
+						<label>Token Name</label>
+						<input type="text" id="mint-name" placeholder="Your token name..." value="Test Token">
+						<div class="warn">Please enter the token name up to 20 chars</div>
+					</div>
+					<div class="field">
+						<label>Symbol</label>
+						<input type="text" id="mint-symbol" placeholder="Your token symbol..." value="TST">
+						<div class="warn">Please enter the token symbol up to 5 chars</div>
+					</div>
+					<div class="field">
+						<label>Decimals</label>
+						<input type="text" id="mint-decimals" placeholder="Decimal places..." value="8">
+						<div class="warn">Please enter the decimal places, preferably 8</div>
+					</div>
+					<div class="field">
+						<label>Supply</label>
+						<input type="text" id="mint-supply" placeholder="Amount to mint..." value="1000000">
+						<div class="warn">Please enter the total amount of tokens to mint</div>
+					</div>
+					<div class="field">
+						<label>Initial Price</label>
+						<input type="text" id="mint-price" placeholder="1.00" value="1.0000">
+						<div class="warn">Please enter the initial trading price shown when listed</div>
+					</div>
+					<button id="submit" onclick="onMint()">MINT</button>
+					<div id="status"></div>
+				</div>
+			</box>
+		</panel>
+
+		<sep></sep>
+		
+		<panel>
+			<box class="pad">
+				<h1 class="title">My Account</h1>
+				<p>In order to mint or trade tokens you need a Hedera account. You can connect your own account Id and private key (only on testnet) or you can generate a new account</p>
+				<div class="field">
+					<label>Account Id</label>
+					<input type="text" id="acctid" placeholder="0.0.000001" value="0.0.000001">
+					<div class="warn">Please enter your account Id</div>
+				</div>
+				<div class="field">
+					<label>Private Key</label>
+					<input type="text" id="acctkey" placeholder="?" value="">
+					<div class="warn">Please enter your private key</div>
+				</div>
+				<div class="actions">
+					<button id="myacct"  onclick="onConnect()">CONNECT</button>
+					<button id="newacct" onclick="onGenerate()">GENERATE</button>
+				</div>
+				<hr>
+				<div id="mytokens">
+					<h1 class="title">My Balance <img id="getbalance" src="/hedera/refresh.png" onclick="getBalances()"></h1>
+					<li class="mybalance"><label>HBAR</label><label id="balance">0.0000000</label></li>
+					<table id="list-mytokens">
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</box>
+
+			<box class="pad">
+				<h1 class="title">Transfer tokens</h1>
+				<div class="field">
+					<label>From Account Id</label>
+					<input type="text" id="transfer-source" placeholder="0.0.000001" value="0.0.000001" disabled>
+					<div class="warn">This is your connected account Id</div>
+				</div>
+				<div class="field">
+					<label>To Account Id</label>
+					<input type="text" id="transfer-target" placeholder="0.0.000001" value="0.0.000001">
+					<div class="warn">Please enter receiving account Id</div>
+				</div>
+				<div class="field">
+					<label>Token Id</label>
+					<input type="text" id="transfer-token" placeholder="Hbar" value="0.0.000001">
+					<div class="warn">Please enter the token Id (leave blank to transfer Hbar)</div>
+					<div class="warn">Token must be associated to your account and balance greater than 0</div>
+					<div class="warn">Click the link on the list to associate a token</div>
+				</div>
+				<div class="field">
+					<label>Amount to send</label>
+					<input type="text" id="transfer-amount" placeholder="0" value="1">
+					<div class="warn">Please enter the amount to send</div>
+				</div>
+				<div class="actions">
+					<button id="transfer" onclick="onTransfer()">TRANSFER</button>
+				</div>
+				<div id="transfer-status">&nbsp;</div>
+			</box>
+
+			<box class="pad">
+				<h1 class="title">Trade tokens</h1>
+				<h3>Buy <span id="trade-token-buyx">USD</span> - Sell <span id="trade-token-sellx">HBAR</span>  <img id="switch" src="/hedera/switch.png" width="20px" onclick="onSwitch()"></h3>
+				<div class="field">
+					<label>Buy <span id="trade-token-buy">USD</span></label>
+					<input type="text" id="trade-amt-buy" placeholder="1" value="1" autocomplete="off">
+					<div class="warn">Amount of tokens to buy</div>
+				</div>
+				<div class="field">
+					<label>Sell <span id="trade-token-sell">HBAR</span></label>
+					<input type="text" id="trade-amt-sell" placeholder="1" value="20.000000" autocomplete="off">
+					<div class="warn">Amount of tokens you will sell</div>
+				</div>
+				<div class="field">
+					<label>Market Price for <span id="trade-pricex">USD/HBAR</span></label>
+					<input type="text" id="trade-price" placeholder="1.000000" value="20.00" disabled>
+					<div class="warn">This is the latest market price</div>
+				</div>
+				<div class="actions">
+					<button id="trade" onclick="onTrade()">TRADE</button>
+				</div>
+				<div id="trade-status">&nbsp;</div>
+			</box>
+
+	    	<box class="info">
+				<h2>Mint your own tokens in Hedera Hashgraph</h2> 
+				<!-- <p class="red">We charge 10 HBARs for every token minted</p> -->
+				<p>Easily create your own tokens in Hedera Hashgraph and start distributing them to your friends or business partners</p>
+				<p>Enter the name of your token, the symbol up to five chars, the total supply and the decimals, then hit the MINT button, your account Id will be used as admin and treasury for holding all tokens issued</p> 
+			    <p>It usually takes less than five seconds to mint your tokens. Once the transaction has been confirmed you can send your freshly minted tokens to other users on the Hedera Network, just copy the token Id provided after minting and use it in your transfer operations</p>
+			    <p>In order to use any token not minted by you, it is necessary to press the link/unlink icon next to the token to associate/dissociate them with your account</p>
+			    <p>By minting tokens you are accepting the fees corresponding to the transaction. You will have to enter your private key to complete the process. We do not store, transmit or use your private key except for the token generation process in this page</p>
+			    <p>All transactions are executed on TESTNET</p>
+	    	</box>
+		</panel>
+	</wrap>
+</section>
+<footer>
+	<wrap>
+		<div id="rights">&copy; 2021 • All rights reserved by WestMinter.com</div>
+	</wrap>
+</footer>
+<script src="/hedera/hedera-sdk.js"></script>
+<script src="/hedera/hedera-lib.js"></script>
+<script src="/hedera/hedera-app.js"></script>
+
+</body>
+</html>

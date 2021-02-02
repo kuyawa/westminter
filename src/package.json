@@ -1,0 +1,23 @@
+{
+  "name": "WestMinter",
+  "version": "1.0.0",
+  "description": "Token Minter",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "14.4.0"
+  },
+  "dependencies": {
+    "@hashgraph/sdk": "^2.0.13",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  },
+  "keywords": [
+    "WestMinter"
+  ]
+}
