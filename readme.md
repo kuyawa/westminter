@@ -1,3 +1,5 @@
+![Logo](media/icon.jpg)
+
 # WestMinter
 
 ## Token minter on Hedera Hashgraph
