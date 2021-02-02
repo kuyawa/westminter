@@ -24,4 +24,6 @@ All transactions are executed on TESTNET
 
 ## Video
 
+[![Video](media/webshotx.jpg)](https://www.youtube.com/watch?v=UNTA2XtD8SU)
+
 https://www.youtube.com/watch?v=UNTA2XtD8SU
