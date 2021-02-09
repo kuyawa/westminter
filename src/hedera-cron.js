@@ -58,6 +58,47 @@ async function fetchLast() {
 }
 
 async function fetchComex() {
+	let url  = 'https://edition.cnn.com/business/markets/commodities';
+	fetch(url).then(res=>{
+		res.text().then(txt=>{
+			let inf  = extract(txt, 'window.__DATA__=', '</script>');
+			let data = JSON.parse(inf);
+			let gldk = '$ROOT_QUERY.cnnBizCommodities({\"labels\":[\"Oil\",\"Brent Crude\",\"Natural Gas\",\"Unleaded Gas\",\"Heating Oil\",\"Gold\",\"Silver\",\"Platinum\",\"Copper\",\"Corn\",\"Soybeans\",\"Wheat\",\"Lean Hogs\",\"Live Cattle\",\"Feeder Cattle\"]}).commodities.5';
+			let slvk = '$ROOT_QUERY.cnnBizCommodities({\"labels\":[\"Oil\",\"Brent Crude\",\"Natural Gas\",\"Unleaded Gas\",\"Heating Oil\",\"Gold\",\"Silver\",\"Platinum\",\"Copper\",\"Corn\",\"Soybeans\",\"Wheat\",\"Lean Hogs\",\"Live Cattle\",\"Feeder Cattle\"]}).commodities.6';
+			let whtk = '$ROOT_QUERY.cnnBizCommodities({\"labels\":[\"Oil\",\"Brent Crude\",\"Natural Gas\",\"Unleaded Gas\",\"Heating Oil\",\"Gold\",\"Silver\",\"Platinum\",\"Copper\",\"Corn\",\"Soybeans\",\"Wheat\",\"Lean Hogs\",\"Live Cattle\",\"Feeder Cattle\"]}).commodities.11';
+			let crnk = '$ROOT_QUERY.cnnBizCommodities({\"labels\":[\"Oil\",\"Brent Crude\",\"Natural Gas\",\"Unleaded Gas\",\"Heating Oil\",\"Gold\",\"Silver\",\"Platinum\",\"Copper\",\"Corn\",\"Soybeans\",\"Wheat\",\"Lean Hogs\",\"Live Cattle\",\"Feeder Cattle\"]}).commodities.9';
+			let sgrk = '$ROOT_QUERY.cnnBizCommodities({\"labels\":[\"Brent Crude\",\"Cocoa\",\"Coffee\",\"Copper\",\"Corn\",\"Cotton\",\"Feeder Cattle\",\"Gold\",\"Heating Oil\",\"Lean Hogs\",\"Live Cattle\",\"Natural Gas\",\"Oil\",\"Orange Juice\",\"Platinum\",\"Silver\",\"Soybeans\",\"Sugar #11\",\"Unleaded Gas\",\"Wheat\"]}).commodities.17';
+			let glds = data[gldk].last;
+			let slvs = data[slvk].last;
+			let whts = data[whtk].last;
+			let crns = data[crnk].last;
+			let sgrs = data[sgrk].last;
+			let gld  = (parseFloat(glds) || 0.0);
+			let slv  = (parseFloat(slvs) || 0.0);
+			let wht  = (parseFloat(whts) || 0.0);
+			let crn  = (parseFloat(crns) || 0.0);
+			let sgr  = (parseFloat(sgrs) || 0.0);
+			//console.log(gld);
+			//console.log(slv);
+			//console.log(wht);
+			//console.log(crn);
+			//console.log(sgr);
+			if(gld>0) { prices.tokens[tokens['GLD']] = gld.toFixed(8); }
+			if(slv>0) { prices.tokens[tokens['SLV']] = slv.toFixed(8); }
+			if(wht>0) { prices.tokens[tokens['WHT']] = wht.toFixed(8); }
+			if(crn>0) { prices.tokens[tokens['CRN']] = crn.toFixed(8); }
+			if(sgr>0) { prices.tokens[tokens['SGR']] = sgr.toFixed(8); }
+			sources += '1';
+			if(sources=='1111'){ savePrices(); }
+		}).catch(ex=>{
+			console.log('JError:', ex);
+		});
+	}).catch(ex=>{
+		console.log('FError:', ex);
+	});
+}
+
+async function fetchComexOLD() {
 	// https://money.cnn.com/data/commodities/
 	// GLD last_GCJ1
 	// SLV last_SIH1

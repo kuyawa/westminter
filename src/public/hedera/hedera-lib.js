@@ -4,6 +4,7 @@ class Wallet {
 	constructor(opId, opKey) {
 		this.operatorId  = opId;
 		this.operatorKey = opKey;
+		this.isConnected = true;
 	}
 }
 
@@ -45,44 +46,47 @@ Wallet.prototype.newAccount = async function(initBalance=2000000000) {
 
 Wallet.prototype.getBalance = async function(act) {
 	console.log('-- Get Balance')
+	let info;
+	try {
+	    let client = Hedera.WebClient.forTestnet();
+	    client.setOperator(this.operatorId, this.operatorKey);
 
-    // Create our connection to the Hedera network
-    let client = Hedera.WebClient.forTestnet();
-    client.setOperator(this.operatorId, this.operatorKey);
+	    let balance = await new Hedera.AccountBalanceQuery()
+	        .setAccountId(act)
+	        .execute(client);
 
-    //Verify the account balance
-    let balance = await new Hedera.AccountBalanceQuery()
-        .setAccountId(act)
-        .execute(client);
-
-    let info = {
-    	account: act, 
-    	hbar   : balance.hbars.toString(),
-    	tbar   : balance.hbars.toTinybars().toString(),
-    	tokens : JSON.parse(balance.tokens.toString())
-    }
+	    info = {
+	    	account: act, 
+	    	hbar   : balance.hbars.toString(),
+	    	tbar   : balance.hbars.toTinybars().toString(),
+	    	tokens : JSON.parse(balance.tokens.toString())
+	    }
+	} catch(ex) {
+		console.log('Balance error', ex);
+		info = {error: ex.message};
+	}
 
     console.log("Balance:", info);
 
     return info;
 }
 
-Wallet.prototype.getBalances = async function(act) {
-	console.log('Balances for', act);
-	let url = 'https://testnet.mirrornode.hedera.com/api/v1/balances?account.id='+act;
-	let opt = { method: 'get' };
-	let res = null;
-	let bal = null;
-	try {
-		res = await fetch(url, opt);
-		bal = await res.json();
-	} catch(ex) {
-		console.log('Error', ex)
-		bal = { balances: [{"account":act, "balance":0, "tokens":[]}] };
-	}
-	console.log('Balances', bal);
-	return bal;
-}
+//Wallet.prototype.getBalances = async function(act) {
+//	console.log('Balances for', act);
+//	let url = 'https://testnet.mirrornode.hedera.com/api/v1/balances?account.id='+act;
+//	let opt = { method: 'get' };
+//	let res = null;
+//	let bal = null;
+//	try {
+//		res = await fetch(url, opt);
+//		bal = await res.json();
+//	} catch(ex) {
+//		console.log('Error', ex)
+//		bal = { balances: [{"account":act, "balance":0, "tokens":[]}] };
+//	}
+//	console.log('Balances', bal);
+//	return bal;
+//}
 
 Wallet.prototype.transfer = async function(destin, amount) {
 	console.log('-- Transfer', amount, 'from', this.operatorId, 'to', destin);
@@ -117,8 +121,8 @@ Wallet.prototype.transfer = async function(destin, amount) {
 	return result;
 }
 
-Wallet.prototype.newToken = async function(sym, name, decs, supply, adminKey, treasuryId, treasuryKey) {
-	console.log('-- New Token');
+Wallet.prototype.newToken = async function(sym, name, decs, supply) {
+	console.log('-- New Token', sym, name, decs, supply);
 	let info;
 
 	try {
@@ -126,8 +130,10 @@ Wallet.prototype.newToken = async function(sym, name, decs, supply, adminKey, tr
 	    let client = Hedera.WebClient.forTestnet();
 	    client.setOperator(this.operatorId, this.operatorKey);
 
-	    let keyA = Hedera.PrivateKey.fromString(adminKey);
-	    let keyT = Hedera.PrivateKey.fromString(treasuryKey);
+	    //let keyA = Hedera.PrivateKey.fromString(adminKey);
+	    //let keyT = Hedera.PrivateKey.fromString(treasuryKey);
+	    let keyA = Hedera.PrivateKey.fromString(this.operatorKey);
+	    let keyT = Hedera.PrivateKey.fromString(this.operatorKey);
 
 		//Create the transaction and freeze for manual signing
 		let transaction = await new Hedera.TokenCreateTransaction()
@@ -135,8 +141,8 @@ Wallet.prototype.newToken = async function(sym, name, decs, supply, adminKey, tr
 		     .setTokenName(name)
 			 .setDecimals(decs)
 		     .setInitialSupply(supply)
-		     .setAdminKey(keyA)
-		     .setTreasuryAccountId(treasuryId)
+		     //.setAdminKey(keyA)
+		     .setTreasuryAccountId(this.operatorId)
 		     .setMaxTransactionFee(new Hedera.Hbar(10)) //Change the default max transaction fee
 		     .freezeWith(client);
 
@@ -147,6 +153,7 @@ Wallet.prototype.newToken = async function(sym, name, decs, supply, adminKey, tr
 		//Sign the transaction with the client operator private key and submit to a Hedera network
 		let response = await final.execute(client);
 		console.log('Response', response)
+
 		//Get the receipt of the transaction
 		let receipt = await response.getReceipt(client);
 	    let status  = receipt.status.toString();

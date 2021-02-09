@@ -137,7 +137,7 @@ header .title { display: inline-block; margin: 0; font-size: 3em; font-weight: 2
 #div-submit { text-align: center; margin: 20px; }
 #submit { display: block; width: 300px; margin: 40px auto 10px; padding: 10px 20px; border: 1px solid #0A8; border-radius: 6px; background-color: var(--color-accented); color: var(--color-dark); font-size: 1.2em; }
 #submit:hover { background-color: #0CA; cursor: pointer; }
-#status { margin-top: 20px; text-align: center; }
+#mint-status { margin-top: 20px; text-align: center; }
 
 .flipswitch { position: relative; width: 132px; }
 .flipswitch input[type=checkbox] { display: none; }

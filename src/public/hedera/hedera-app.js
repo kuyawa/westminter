@@ -13,7 +13,8 @@ let session = {
 	trade  : '0.0.0',
 	price  : 1.0,
 	buying : true,
-	mobile : false
+	mobile : false,
+	refresh: true
 }
 
 let tokens = {
@@ -48,6 +49,12 @@ let tokens = {
 //---- UTILS
 
 function $(id) { return document.getElementById(id); }
+
+function isOnline(){ 
+	if(navigator.onLine){ return true; }
+	alert('No internet connection'); 
+	return false; 
+}
 
 async function webget(url) {
 	console.log('Fetch', url);
@@ -94,10 +101,6 @@ function validNumber(text='') {
     return number;
 }
 
-function mintStatus(txt) {
-	$('status').innerHTML = txt;
-}
-
 function checkMobile(){ 
 	session.mobile = (document.body.clientWidth<=720);
 }
@@ -118,11 +121,11 @@ function swapColorTheme() {
 	$('theme').className    = (mode=='dark-mode')?'lighter':'darker'; 
 }
 
-async function getBalance() {
-    let res = await session.wallet.getBalance(session.user.accountId);
-    let bal = res.tbar / HBAR;
-    $('balance').innerHTML = money(bal, 8, true);
-}
+//async function getBalance() {
+//    let res = await session.wallet.getBalance(session.user.accountId);
+//    let bal = res.tbar / HBAR;
+//    $('balance').innerHTML = money(bal, 8, true);
+//}
 
 async function getBalances() {
 	let tmp = '<tr id="mytoken-{tid}"><td class="mytokensym">{sym}</td><td class="mytokenid">{tid}</td><td class="mytokenbal">{bal}</td></tr>'
@@ -166,6 +169,13 @@ async function getTokenBalance() {
     $('balance').innerHTML = bal;
 }
 
+async function reloadTokenPrices() {
+	console.log('Reloading token prices');
+	loadTokenPrices().then(()=>{
+		selectToken(0, '0.0.271860'); // USD
+	});
+}
+
 async function loadTokenPrices() {
 	let prices = await webget('/hedera/latestprices');
 	console.log('Prices', prices);
@@ -173,9 +183,11 @@ async function loadTokenPrices() {
 	let upd = (new Date(prices.updated)).getTime();
 	let dif = now - upd;
 	let m10 = 10*60*1000; // ten minutes
-	if(dif>m10){ 
+	console.log('Diff', now, upd, dif, m10, dif>m10?'OK':'NO');
+	if(dif>m10 && session.refresh){ 
 		console.log('Refresh prices');
-		setTimeout(loadTokenPrices, 3000);
+		session.refresh = false;
+		setTimeout(reloadTokenPrices, 4000);
 		return;
 	}
 	for(var tid in prices.tokens){
@@ -217,59 +229,8 @@ async function loadUserTokens() {
 	$('list-users').tBodies[1].innerHTML = html;
 }	
 
-async function onMint() {
-    if(!session.wallet){ mintStatus('Wallet not connected'); return; }
-	let symbol   = $('mint-symbol').value;
-	let name     = $('mint-name').value;
-	let decimals = $('mint-decimals').value;
-	let supply   = $('mint-supply').value;
-	let price    = $('mint-price').value;
-	let amount   = supply * 10 ** decimals;
-
-    try { 
-    	mintStatus('Wait, minting tokens...');
-        let adminKey    = session.wallet.operatorKey;
-        let treasuryId  = session.wallet.operatorId;
-        let treasuryKey = session.wallet.operatorKey;
-    	let res = await session.wallet.newToken(symbol, name, decimals, amount, adminKey, treasuryId, treasuryKey);
-    	//console.log('Mint', res); 
-	    if(res.error){
-	        mintStatus('Error minting token: ' + res.error);
-	    } else {
-	        mintStatus('Token Id ' + res.tokenId);
-	        $('transfer-token').value = res.tokenId;
-	        getBalances();
-	        // Add to user token list
-	        tokenId  = res.tokenId;
-	        symbol   = symbol.replace(/"/g,'').replace(/'/g,'').replace(/,/g,'');
-	        name     = name.replace(/"/g,'').replace(/'/g,'').replace(/,/g,'');
-	        decimals = parseInt(decimals);
-	        supply   = parseInt(supply);
-	        price    = parseFloat(price);
-	        pricex   = price.toFixed(8);
-	        let url  = `/hedera/addusertoken/${tokenId}/${symbol}/${name}/${decimals}/${supply}/${pricex}`;
-			let rex  = await fetch(url, {method: 'get'});
-			let rez  = await rex.text();
-			if(rez=='OK'){ console.log('Token saved'); }
-			else { console.log('Error saving token in user list', rez); }
-			// Add to user tokens list
-			let tmp = '<tr id="{tid}" data-price="{pricex}"><td>{sym}</td><td>{name}</td><td>{price}</td><td>{supply}</td><td>{tid}</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>';
-			let row = tmp.replace(/{tid}/g,   tokenId)
-						 .replace('{sym}',    symbol)
-						 .replace('{name}',   name)
-						 .replace('{pricex}', pricex)
-						 .replace('{price}',  money(price, session.mobile?2:4, true))
-						 .replace('{supply}', money(supply, 0));
-			console.log('ROW', row);
-			$('list-users').tBodies[1].innerHTML += row;
-	    }
-    } catch(ex) { 
-    	console.log(ex); 
-    	mintStatus('Error sending transaction'); 
-    }
-}
-
 async function onConnect() {
+	if(!isOnline()) return;
 	if(!$('acctid').value)  { alert('Account Id is required');  return; }
 	if(!$('acctkey').value) { alert('Private key is required'); return; }
 	if(!testPrivateKey($('acctkey').value)) { alert('Private key is invalid'); return; }
@@ -277,10 +238,13 @@ async function onConnect() {
     session.user.privateKey = $('acctkey').value;
 	session.wallet = new Wallet(session.user.accountId, session.user.privateKey);
 	$('transfer-source').value = session.user.accountId;
+	$('myacct').innerHTML = 'CONNECTED';
+	//setTimeout(function(){$('myacct').innerHTML='CONNECT'; $('acctkey').value='';}, 3000);
     getBalances();
 }
 
 async function onGenerate() {
+	if(!isOnline()) return;
 	$('newacct').disabled  = true;
 	$('newacct').innerHTML = 'WAIT';
 	let ok = true;
@@ -301,24 +265,31 @@ async function onGenerate() {
 		ok = false;
 	}
 	if(ok){
-	    $('acctid').value      = session.user.accountId;
-	    $('acctkey').value     = session.user.privateKey;
-		$('newacct').innerHTML = 'GENERATE';
-		$('newacct').disabled  = false;
-		session.wallet = new Wallet(session.user.accountId, session.user.privateKey);
+	    $('acctid').value  = session.user.accountId;
+	    $('acctkey').value = session.user.privateKey;
 		$('transfer-source').value = session.user.accountId;
+		session.wallet = new Wallet(session.user.accountId, session.user.privateKey);
 	    getBalances();
 	}
+	$('newacct').innerHTML = 'GENERATE';
+	$('newacct').disabled  = false;
+}
+
+function transferStatus(txt, sec) {
+	$('transfer-status').innerHTML = txt;
+	if(sec){ setTimeout(function(){$('transfer-status').innerHTML='';}, sec*1000); }
 }
 
 async function onTransfer() {
+	if(!isOnline()) return;
+	if(!session.wallet || !session.wallet.isConnected){ transferStatus('Wallet not connected', 5); return; }
 	let source  = session.wallet.accountId;
 	let destin  = $('transfer-target').value;
 	let tokenId = $('transfer-token').value;
 	let amount  = $('transfer-amount').value;
 	$('transfer').disabled  = true;
 	$('transfer').innerHTML = 'WAIT';
-	$('transfer-status').innerHTML = 'Processing transaction...';
+	transferStatus('Processing transaction...');
 	let status  = '';
 	let tinybar = 0;
 	let result  = null;
@@ -334,7 +305,7 @@ async function onTransfer() {
 	//console.log('Transfer result', result);
 	if(result.error) { status = 'Error: '+result.error; }
 	else { status = result.status+' <a href="https://testnet.dragonglass.me/hedera/search?q='+result.hash+'" target="_blank">(Transaction)</a>'; }
-	$('transfer-status').innerHTML = status;
+	transferStatus(status);
 	$('transfer').innerHTML = 'TRANSFER';
 	$('transfer').disabled  = false;
 	getBalances();
@@ -357,7 +328,14 @@ function calcSell() {
 }
 
 
+function tradeStatus(txt, sec) {
+	$('trade-status').innerHTML = txt;
+	if(sec){ setTimeout(function(){$('trade-status').innerHTML='';}, sec*1000); }
+}
+
 async function onTrade() {
+	if(!isOnline()) return;
+	if(!session.wallet || !session.wallet.isConnected){ tradeStatus('Wallet not connected',5); return; }
 	console.log('Trade', session.buying?'BUY':'SELL', session.trade, 'Price', session.price);
 	if(session.buying){
 		buyTokens(session.trade);
@@ -369,7 +347,7 @@ async function onTrade() {
 async function showTrade(msg, cap='TRADE', disabled=false) {
 	$('trade').disabled  = disabled;
 	$('trade').innerHTML = cap;
-	$('trade-status').innerHTML = msg;
+	tradeStatus(msg);
 }
 
 async function buyTokens(tokenId) {
@@ -459,7 +437,69 @@ async function sellTokens(tokenId) {
 	}
 }
 
+function mintStatus(txt, sec) {
+	$('mint-status').innerHTML = txt;
+	if(sec){ setTimeout(function(){$('mint-status').innerHTML='';}, sec*1000); }
+}
+
+async function onMint() {
+	if(!isOnline()) return;
+	if(!session.wallet || !session.wallet.isConnected){ mintStatus('Wallet not connected',5); return; }
+	let symbol   = $('mint-symbol').value;
+	let name     = $('mint-name').value;
+	let decimals = $('mint-decimals').value;
+	let supply   = $('mint-supply').value;
+	let price    = $('mint-price').value;
+	let amount   = supply * 10 ** decimals;
+
+    try { 
+    	mintStatus('Wait, minting tokens...');
+        //let adminKey    = session.wallet.operatorKey;
+        //let treasuryId  = session.wallet.operatorId;
+        //let treasuryKey = session.wallet.operatorKey;
+    	let res = await session.wallet.newToken(symbol, name, decimals, amount);
+    	console.log('Mint', res); 
+	    if(res.error){
+	        console.log('Error minting token:', res.error);
+	        mintStatus('Error minting token: ' + res.error);
+	    } else {
+	        console.log('Token Id ' + res.tokenId);
+	        mintStatus('Token Id ' + res.tokenId);
+	        $('transfer-token').value = res.tokenId;
+	        getBalances();
+	        // Add to user token list
+	        tokenId  = res.tokenId;
+	        symbol   = symbol.replace(/"/g,'').replace(/'/g,'').replace(/,/g,'');
+	        name     = name.replace(/"/g,'').replace(/'/g,'').replace(/,/g,'');
+	        decimals = parseInt(decimals);
+	        supply   = parseInt(supply);
+	        price    = parseFloat(price);
+	        pricex   = price.toFixed(8);
+	        let url  = `/hedera/addusertoken/${tokenId}/${symbol}/${name}/${decimals}/${supply}/${pricex}`;
+			let rex  = await fetch(url, {method: 'get'});
+			let rez  = await rex.text();
+			if(rez=='OK'){ console.log('Token saved'); }
+			else { console.log('Error saving token in user list', rez); }
+			// Add to user tokens list
+			let tmp = '<tr id="{tid}" data-price="{pricex}"><td>{sym}</td><td>{name}</td><td>{price}</td><td>{supply}</td><td>{tid}</td><td><img class="linker" src="/hedera/icon-unlink.png" onclick="onLink()" title="Associate token"></td></tr>';
+			let row = tmp.replace(/{tid}/g,   tokenId)
+						 .replace('{sym}',    symbol)
+						 .replace('{name}',   name)
+						 .replace('{pricex}', pricex)
+						 .replace('{price}',  money(price, session.mobile?2:4, true))
+						 .replace('{supply}', money(supply, 0));
+			console.log('ROW', row);
+			$('list-users').tBodies[1].innerHTML += row;
+	    }
+    } catch(ex) { 
+    	console.log(ex); 
+    	mintStatus('Error sending transaction'); 
+    }
+}
+
 async function onLink() {
+	if(!isOnline()) return;
+	// TODO: check session.wallet.isConnected
 	let evt = window.event;
 	//console.log('Event', evt);
 	let tokenId = evt.target.parentNode.parentNode.id;
@@ -510,7 +550,7 @@ async function selectToken(n, tokenId) {
 	let sym = tokens[tokenId].symbol;
 	$('transfer-token').value = tokenId;
 
-	// User tokens can not be traded, we have no admin keys
+	// User tokens can not be traded, we have no admin keys, think about liquidity pools
 	if(n<4){
 		let base = sym; 
 		let quot = 'HBAR';
