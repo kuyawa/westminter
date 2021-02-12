@@ -24,6 +24,19 @@ By minting tokens you are accepting the fees corresponding to the transaction. Y
 
 All transactions are executed on TESTNET
 
+## How to run
+
+To run this dApp in your server just follow these steps:
+
+```
+$ git clone https://github.com/kuyawa/westminter
+$ cd westminter/src
+$ npm install
+$ node index
+```
+
+That's it, Westminter was created using NodeJS and Hedera JS SDK with plain vanilla HTML, CSS and JS on the client.
+
 ## Video
 
 [![Video](media/webshotx.jpg)](https://www.youtube.com/watch?v=4995ZQu3Ma8)
